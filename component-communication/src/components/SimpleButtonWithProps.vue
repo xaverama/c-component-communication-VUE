@@ -1,36 +1,54 @@
+
+
 <template>
-  <button id="feedBtn" @click="throwSomeFoodIntoTheCage">Feed Me! 🐼</button>
+  <button id="feedBtn" @click="throwSomeFoodIntoTheBowl">Feed Me! {{ props.animal }}</button>
 </template>
 
 <script setup lang="ts">
 import {computed, onMounted, ref} from "vue";
 
-const hungryPanda = ref("🐼");
-const food = ref("");
-const bamboo = ref("🎋")
-const pandaCage = computed(() => hungryPanda.value + food.value)
+const props = withDefaults(defineProps<{
+  animal?: string;
+  description?: string;
+  nutrition?: string;
+}>(), {
+  animal: "🐼",
+  description: "panda",
+  nutrition: "🎋"
+})
 
-function throwSomeFoodIntoTheCage(){
-  food.value = food.value + bamboo.value
-  console.log("this is our panda cage", pandaCage.value)
+const emits = defineEmits<{
+  (event: "animal", value: string): void
+}>();
+
+const hungryAnimal = ref(props.animal);
+const foodBowl = ref("");
+const food = ref(props.nutrition)
+const animalCage = computed(() => hungryAnimal.value + foodBowl.value)
+
+function throwSomeFoodIntoTheBowl() {
+  foodBowl.value = foodBowl.value + food.value
+  console.log(`this is our ${props.description} cage`, animalCage.value)
+  emits("animal", foodBowl.value)
 }
 
-onMounted(()=> {
-  console.log("on page load panda cage", pandaCage.value)
+onMounted(() => {
+  console.log(`on page load ${props.description} cage`, animalCage.value)
 })
 
 </script>
 
 <style scoped>
 
-#feedBtn{
+#feedBtn {
   background: palevioletred;
   border-radius: 8px;
   border: none;
   color: white;
   padding: 10px 20px;
 }
-#feedBtn:hover{
+
+#feedBtn:hover {
   opacity: 0.7;
   cursor: pointer;
 }
